@@ -264,7 +264,9 @@ if($("clearHistory")) $("clearHistory").onclick=()=>{if(confirm("Hapus seluruh r
 renderHistory();
 
 // Koneksi daring dan area guru. Jika belum disetel, website tetap bisa dicoba secara lokal.
-let mbaApiUrl=localStorage.getItem("mba_api_url")||"", mbaClientId=localStorage.getItem("mba_client_id")||"", mbaTeacherToken="", mbaTeacherEmail="", mbaQuestionCache=[];
+const MBA_DEFAULT_API_URL="https://script.google.com/macros/s/AKfycbzYqGeh6b9XX-mfn1TyI_Akx4OlH0tGZHnjGaFDWkgYh0qiUuppj9i5Za1lpArn4tc1zA/exec";
+const MBA_DEFAULT_CLIENT_ID="614279120142-0j17na1pjb9hohtdnb4om72oalhvv0fm.apps.googleusercontent.com";
+let mbaApiUrl=localStorage.getItem("mba_api_url")||MBA_DEFAULT_API_URL, mbaClientId=localStorage.getItem("mba_client_id")||MBA_DEFAULT_CLIENT_ID, mbaTeacherToken="", mbaTeacherEmail="", mbaQuestionCache=[];
 $("apiUrl").value=mbaApiUrl; $("clientId").value=mbaClientId;
 function mbaStatus(msg){$("connectionStatus").textContent=msg;}
 function saveConnection(){mbaApiUrl=$("apiUrl").value.trim();mbaClientId=$("clientId").value.trim();localStorage.setItem("mba_api_url",mbaApiUrl);localStorage.setItem("mba_client_id",mbaClientId);mbaStatus("Pengaturan disimpan. Muat ulang halaman untuk memuat login Google.");}
@@ -290,6 +292,6 @@ async function loadOnlineResults(){try{const d=await teacherApi('teacherGetResul
 async function downloadOnlineCsv(){try{const d=await teacherApi('teacherGetResults');const rows=[['Waktu','Nama','Kegiatan','Skor','Jumlah Soal','Persentase','Rekomendasi'],...(d.results||[]).map(r=>[r.timestamp,r.name,r.mode,r.score,r.total,r.percent,r.recommendedLevel])];const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}));a.download='hasil-misi-belajar-adaptif.csv';a.click();URL.revokeObjectURL(a.href);}catch(e){mbaStatus(e.message);}}
 function teacherLogout(){mbaTeacherToken='';mbaTeacherEmail='';$('teacherWorkspace').classList.add('hidden');$('teacherLogin').classList.remove('hidden');$('editorArea').innerHTML='';$('resultsArea').innerHTML='';mbaStatus('Guru telah keluar.');}
 $('saveConnection').onclick=saveConnection;$('manageQuestions').onclick=loadQuestionEditor;$('viewResults').onclick=loadOnlineResults;$('teacherLogout').onclick=teacherLogout;
-window.addEventListener('load',()=>setTimeout(initializeGoogle,900));
+window.addEventListener('load',()=>setTimeout(()=>{initializeGoogle();if(mbaApiUrl)mbaApi('ping').then(()=>mbaStatus('Terhubung ke penyimpanan online.')).catch(e=>mbaStatus('Koneksi online belum berhasil: '+e.message));},900));
 </script>
 </body></html>
