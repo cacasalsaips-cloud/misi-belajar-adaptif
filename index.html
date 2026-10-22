@@ -119,16 +119,6 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
   <p id="connectionStatus" class="small muted" role="status">Menghubungkan ke penyimpanan online...</p>
 </section>
 
-<section class="panel">
-  <h2>Rekap pada Perangkat Ini</h2>
-  <p class="small muted">Rekap lokal hanya tersedia pada browser yang digunakan. Hasil online dilihat melalui Area Guru.</p>
-  <div id="historyArea"></div>
-  <div class="actions">
-    <button id="downloadCsv" class="secondary">Unduh Rekap Lokal CSV</button>
-    <button id="clearHistory" class="quiet">Hapus Rekap Lokal</button>
-    <button id="retryPending" class="secondary">Kirim Ulang Hasil Tertunda</button>
-  </div>
-</section>
 </main>
 <footer>Misi Belajar Adaptif • Pola Bukan Bilangan • Kelas II SD</footer>
 
@@ -320,8 +310,7 @@ function localHistory(){try{return JSON.parse(localStorage.getItem("mbaPolaHisto
 function addHistory(row){
  const data=localHistory();data.push(row);
  localStorage.setItem("mbaPolaHistory",JSON.stringify(data));
- renderHistory();
-}
+ }
 function recordResult(type,score,total,path){
  const time=new Date().toLocaleString("id-ID");
  addHistory({nama:name,jenis:type,skor:score,total,jalur:path,waktu:time});
@@ -353,20 +342,6 @@ function finishMission(){
  $("resultTitle").textContent=score>=8?"Hebat! Misi berhasil diselesaikan!":score>=5?"Bagus, kamu sedang berkembang!":"Terus berlatih, kamu pasti bisa!";
  $("resultMessage").textContent=`Kamu menyelesaikan ${levelLabel[level]}. Teruslah berlatih dan amati bagian pola yang berulang.`;
  show("resultPanel");
-}
-function renderHistory(){
- const data=localHistory();
- if(!data.length){$("historyArea").innerHTML='<p class="muted">Belum ada hasil pada perangkat ini.</p>';return;}
- $("historyArea").innerHTML='<div class="tablewrap"><table><thead><tr><th>Nama</th><th>Kegiatan</th><th>Skor</th><th>Jalur</th><th>Waktu</th></tr></thead><tbody>'+
- data.slice().reverse().map(r=>`<tr><td>${escapeHtml(r.nama)}</td><td>${escapeHtml(r.jenis)}</td><td>${r.skor}/${r.total}</td><td>${escapeHtml(r.jalur)}</td><td>${escapeHtml(r.waktu)}</td></tr>`).join("")+
- '</tbody></table></div>';
-}
-function downloadCsv(){
- const data=localHistory();
- if(!data.length){alert("Belum ada rekap untuk diunduh.");return;}
- const rows=[["Nama","Kegiatan","Skor","Total","Jalur","Waktu"],...data.map(r=>[r.nama,r.jenis,r.skor,r.total,r.jalur,r.waktu])];
- const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"}));a.download="rekap_misi_belajar_adaptif.csv";a.click();URL.revokeObjectURL(a.href);
 }
 
 /* Area Guru: bank soal */
@@ -467,18 +442,10 @@ $("quitQuiz").onclick=()=>{if(confirm("Kembali? Progres soal saat ini tidak akan
 $("continueAfterResult").onclick=()=>show("levelInfo");
 $("retryMission").onclick=beginMission;
 $("homeButton").onclick=()=>{show("welcome");$("studentName").value=name;};
-$("downloadCsv").onclick=downloadCsv;
-$("clearHistory").onclick=()=>{
- if(confirm("Hapus seluruh rekap lokal pada browser ini? Data online di Google Sheets tidak terhapus.")){
-  localStorage.removeItem("mbaPolaHistory");renderHistory();
- }
-};
-$("retryPending").onclick=retryPending;
 $("manageQuestions").onclick=loadQuestionEditor;
 $("viewResults").onclick=loadOnlineResults;
 $("teacherLogout").onclick=teacherLogout;
 
-renderHistory();
 window.addEventListener("load",()=>setTimeout(initializeGoogle,1000));
 if(navigator.onLine)retryPending();
 </script>
