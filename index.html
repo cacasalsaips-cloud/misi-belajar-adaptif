@@ -211,7 +211,7 @@ input[type=text]:focus{border-color:#6b9df0}
       </ol>
       <div class="guide-note">💡 Jika membutuhkan panduan kembali, guru dapat membuka petunjuk penggunaan dari dashboard.</div>
     </div>
-    <div class="guide-actions" style="gap:10px;flex-wrap:wrap"><button type="button" id="backGuide" class="quiet">← Kembali</button><button type="button" id="closeGuide" class="primary">Lanjutkan</button></div>
+    <div class="guide-actions" id="studentGuideActions" style="gap:10px;flex-wrap:wrap"><button type="button" id="closeGuide" class="quiet">Tutup</button><button type="button" id="startFromGuide" class="primary">Mulai Asesmen →</button></div><div class="guide-actions hidden" id="teacherGuideActions"><button type="button" id="teacherGuideClose" class="quiet">Tutup</button></div>
   </div>
 </div>
 
@@ -273,20 +273,26 @@ let selectedAppMode="";
 function openGuide(which){
   $("studentGuide").classList.toggle("hidden",which!=="student");
   $("teacherGuide").classList.toggle("hidden",which!=="teacher");
+  $("studentGuideActions").classList.toggle("hidden",which!=="student");
+  $("teacherGuideActions").classList.toggle("hidden",which!=="teacher");
   $("guideTitle").textContent=which==="student"?"Misi Belajar Adaptif":"Panduan untuk Guru";
   $("guideSubtitle").textContent=which==="student"?"Petunjuk untuk Penjelajah Pola":"Petunjuk pengelolaan asesmen dan soal";
   $("guideModal").classList.remove("hidden");
 }
 function closeGuide(){
   $("guideModal").classList.add("hidden");
-  if(selectedAppMode==="student"){
-    $("modeSelection").classList.add("hidden");
-    $("teacherPanel").classList.add("hidden");
-    show("welcome");
-  }else if(selectedAppMode==="teacher"){
+  // Mode Murid: Tutup hanya menutup pop-up dan tetap di pilihan mode.
+  // Mode Guru: Tutup menutup panduan lalu melanjutkan ke halaman login guru.
+  if(selectedAppMode==="teacher"){
     $("modeSelection").classList.add("hidden");
     $("teacherPanel").classList.remove("hidden");
   }
+}
+function startStudentAssessment(){
+  $("guideModal").classList.add("hidden");
+  $("modeSelection").classList.add("hidden");
+  $("teacherPanel").classList.add("hidden");
+  show("welcome");
 }
 $("chooseStudentMode").onclick=()=>{selectedAppMode="student";$("guideToggle").classList.remove("hidden");openGuide("student");};
 $("chooseTeacherMode").onclick=()=>{
@@ -294,22 +300,10 @@ $("chooseTeacherMode").onclick=()=>{
   $("guideToggle").classList.remove("hidden");
   openGuide("teacher");
 };
-$("closeGuide").onclick=closeGuide;
+$("closeGuide").onclick=()=>{$("guideModal").classList.add("hidden");};
+$("startFromGuide").onclick=startStudentAssessment;
+$("teacherGuideClose").onclick=closeGuide;
 $("guideToggle").onclick=()=>openGuide(selectedAppMode==="teacher"?"teacher":"student");
-$("backGuide").onclick=()=>{
-  $("guideModal").classList.add("hidden");
-  if(selectedAppMode==="student"){
-    show("welcome");
-    $("welcome").classList.add("hidden");
-    $("modeSelection").classList.remove("hidden");
-    selectedAppMode="";
-    $("guideToggle").classList.add("hidden");
-  }else if(selectedAppMode==="teacher"){
-    // Setelah login guru, tutup panduan tanpa mengeluarkan akun.
-    if(mbaTeacherToken){$("teacherPanel").classList.remove("hidden");}
-    else {$("teacherPanel").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";}
-  }
-};
 $("backFromWelcome").onclick=()=>{show("welcome");$("welcome").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";};
 $("backFromTeacher").onclick=()=>{
   if(mbaTeacherToken){
