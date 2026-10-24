@@ -7,7 +7,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--blue:#2563eb;--navy:#173b72;--sky:#eaf3ff;--mint:#e8f8ef;--gold:#fff4d8;--ink:#203047;--muted:#63748b;--line:#dce6f2;--white:#fff;--purple:#7047c8}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,#eef6ff 0%,#f9fbff 55%,#effaf5 100%);min-height:100vh}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 8% 8%,rgba(191,219,254,.42) 0,rgba(191,219,254,0) 32%),radial-gradient(ellipse at 92% 28%,rgba(167,243,208,.28) 0,rgba(167,243,208,0) 30%),#f8faff;min-height:100vh}
 header{background:linear-gradient(120deg,#17428a,#3478e5);color:white;padding:24px 18px 28px}
 .wrap{max-width:1000px;margin:auto}header .brand{font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;opacity:.9;font-weight:800}
 header h1{margin:8px 0;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.1}header p{margin:8px 0 0;max-width:680px;line-height:1.6;color:#eaf2ff}
@@ -54,9 +54,56 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
 .guide-actions{display:flex;justify-content:center;margin-top:20px}
 @media(max-width:600px){.mode-grid{grid-template-columns:1fr}.mode-card{min-height:0}.guide-modal{padding:20px}}
 
+
+/* Tampilan ramah anak SD: ceria, bersih, dan tetap nyaman dibaca */
+body{
+ background-color:#fffdf7;
+ background-image:
+  radial-gradient(circle at 7% 13%,rgba(255,205,86,.24) 0 7%,transparent 7.3%),
+  radial-gradient(circle at 94% 18%,rgba(112,208,190,.20) 0 8%,transparent 8.3%),
+  radial-gradient(circle at 88% 78%,rgba(186,164,255,.16) 0 9%,transparent 9.3%),
+  radial-gradient(circle at 10% 88%,rgba(255,160,173,.15) 0 7%,transparent 7.3%),
+  linear-gradient(135deg,#fffdf7 0%,#f4fbff 52%,#f8fff7 100%);
+}
+header{
+ position:relative;overflow:hidden;
+ background:linear-gradient(120deg,#2858b8 0%,#397de0 55%,#26a9a0 100%);
+ border-bottom:6px solid #ffd166;
+}
+header:before,header:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+header:before{width:190px;height:190px;right:-35px;top:-78px;background:rgba(255,255,255,.13)}
+header:after{width:95px;height:95px;right:160px;bottom:-58px;background:rgba(255,209,102,.25)}
+header .wrap{position:relative;z-index:1}
+header .brand{display:inline-block;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:7px 12px;letter-spacing:.08em}
+header h1{text-shadow:0 2px 0 rgba(22,52,105,.13)}
+main{padding-top:26px}
+.panel{border:2px solid #e4edf8;border-radius:24px;box-shadow:0 8px 0 rgba(63,107,164,.055),0 14px 32px rgba(43,79,128,.07)}
+.pill{background:#fff0bf;color:#78520a;border:1px solid #ffe29a}
+.mode-card{border-width:2px;border-radius:22px;box-shadow:0 5px 0 rgba(48,76,125,.055);transition:transform .15s,box-shadow .15s,border-color .15s}
+.mode-card.student{background:linear-gradient(145deg,#f0f7ff,#fff);border-color:#c9ddff}
+.mode-card.teacher{background:linear-gradient(145deg,#f7f1ff,#fff);border-color:#ddd2ff}
+.mode-card .mode-icon{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:#fff;box-shadow:0 3px 0 rgba(40,70,120,.08);font-size:2rem}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 9px 0 rgba(48,76,125,.06),0 12px 22px rgba(43,79,128,.08)}
+button{border-radius:14px}
+.guide-toggle{position:fixed;right:14px;top:14px;z-index:900;background:#fff;border:2px solid #d8e6f7;color:#244b88;box-shadow:0 5px 18px rgba(35,65,110,.15);padding:10px 14px;border-radius:999px;font-size:.9rem}
+.sound-toggle{position:fixed;right:14px;bottom:14px;z-index:900;background:#fff;border:2px solid #d8e6f7;color:#244b88;box-shadow:0 5px 18px rgba(35,65,110,.15);padding:10px 14px;border-radius:999px;font-size:.9rem}
+.sound-toggle[aria-pressed="false"]{background:#f1f5f9;color:#64748b}
+.primary{background:linear-gradient(135deg,#3475e5,#2858b8);box-shadow:0 3px 0 #1f4c9e}
+.secondary{background:#eaf3ff;border:1px solid #d2e3ff}
+.question{background:linear-gradient(135deg,#f2f8ff,#fff9e9);border:2px dashed #b8d2f6;border-radius:20px}
+.option{border-width:2px;border-radius:15px;transition:background .15s,border-color .15s,transform .15s}
+.option:hover{border-color:#8bb5f5;background:#f5f9ff;transform:translateY(-1px)}
+.level{border-width:2px;border-radius:20px}
+.progress{height:11px;background:#eaf0fa}
+.progress>div{background:linear-gradient(90deg,#3475e5,#42c6b5,#ffd166)}
+input[type=text]{border-width:2px;border-color:#d5e2f2}
+input[type=text]:focus{border-color:#6b9df0}
+@media(max-width:700px){header{border-bottom-width:5px}.panel{border-radius:20px}}
 </style>
 </head>
 <body>
+<button type="button" id="guideToggle" class="guide-toggle hidden" title="Buka petunjuk penggunaan">📖 Petunjuk</button>
+<button type="button" id="soundToggle" class="sound-toggle" aria-pressed="true" title="Nyalakan atau matikan suara">🔊 Suara: Aktif</button>
 <header><div class="wrap">
   <div class="brand">Matematika • Kelas II SD</div>
   <h1>✨ Misi Belajar Adaptif</h1>
@@ -80,13 +127,12 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
   </section>
 
   <section id="welcome" class="panel hidden">
-    <div class="toprow"><span class="pill">Belajar sesuai kebutuhan</span><span class="small muted">Bisa dibuka melalui HP, laptop, atau komputer</span></div>
+    <div class="toprow"><span class="pill">Belajar sesuai kebutuhan</span></div>
     <h2 style="margin-top:14px">Selamat datang, Penjelajah Pola! 👋</h2>
     <p>Isi nama terlebih dahulu, kemudian kerjakan 10 soal asesmen awal. Jawablah sendiri sesuai pemahamanmu. Hasilnya akan membantu menentukan misi latihan yang cocok.</p>
     <label for="studentName"><strong>Nama murid</strong></label>
     <input id="studentName" type="text" maxlength="70" placeholder="Tulis nama di sini">
     <div class="actions"><button type="button" class="quiet" id="backFromWelcome">← Kembali</button><button class="primary" id="startDiagnostic">Mulai Asesmen Awal →</button></div>
-    <p class="small muted">Hasil misi akan dikirim ke rekap guru saat koneksi daring sudah diaktifkan.</p>
   </section>
 
   <section id="levelInfo" class="panel hidden">
@@ -123,7 +169,7 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
     <div class="toprow"><h2>📋 Area Guru</h2><span class="pill">Kelola soal & hasil murid</span></div>
     <div class="actions" style="justify-content:flex-start;margin-top:0"><button type="button" class="quiet" id="backFromTeacher">← Kembali ke Pilihan Mode</button></div>
     <p class="small muted">Guru login dengan akun Google yang sudah diizinkan. Murid tidak perlu login.</p>
-    <div id="teacherLogin"><div id="googleButton"></div><p class="small muted">Masuk menggunakan akun Google guru yang telah diizinkan.</p></div>
+    <div id="teacherLogin"><div id="googleButton"></div><p class="small muted">Masuk menggunakan akun Google masing-masing. Semua akun Google terverifikasi dapat masuk sebagai guru.</p></div>
     <div id="teacherWorkspace" class="hidden">
       <p id="teacherIdentity" class="pill"></p>
       <div class="actions"><button class="primary" id="manageQuestions">Kelola Soal</button><button class="secondary" id="viewResults">Lihat Hasil Murid</button><button class="quiet" id="teacherLogout">Keluar</button></div>
@@ -242,14 +288,14 @@ function closeGuide(){
     $("teacherPanel").classList.remove("hidden");
   }
 }
-$("chooseStudentMode").onclick=()=>{selectedAppMode="student";openGuide("student");};
+$("chooseStudentMode").onclick=()=>{selectedAppMode="student";$("guideToggle").classList.remove("hidden");openGuide("student");};
 $("chooseTeacherMode").onclick=()=>{
   selectedAppMode="teacher";
-  $("modeSelection").classList.add("hidden");
-  $("welcome").classList.add("hidden");
-  $("teacherPanel").classList.remove("hidden");
+  $("guideToggle").classList.remove("hidden");
+  openGuide("teacher");
 };
 $("closeGuide").onclick=closeGuide;
+$("guideToggle").onclick=()=>openGuide(selectedAppMode==="teacher"?"teacher":"student");
 $("backGuide").onclick=()=>{
   $("guideModal").classList.add("hidden");
   if(selectedAppMode==="student"){
@@ -257,6 +303,7 @@ $("backGuide").onclick=()=>{
     $("welcome").classList.add("hidden");
     $("modeSelection").classList.remove("hidden");
     selectedAppMode="";
+    $("guideToggle").classList.add("hidden");
   }else if(selectedAppMode==="teacher"){
     // Setelah login guru, tutup panduan tanpa mengeluarkan akun.
     if(mbaTeacherToken){$("teacherPanel").classList.remove("hidden");}
@@ -268,7 +315,7 @@ $("backFromTeacher").onclick=()=>{
   if(mbaTeacherToken){
     if(!confirm("Kamu sudah login sebagai guru. Kembali ke pilihan mode tanpa keluar dari akun?")) return;
   }
-  $("teacherPanel").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";
+  $("teacherPanel").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";$("guideToggle").classList.add("hidden");
 };
 function show(id){["welcome","levelInfo","quizPanel","resultPanel"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
 function normalize(s){return String(s||"").toLowerCase().trim().replace(/[.,!?;:]/g,"").replace(/\s+/g," ");}
@@ -303,6 +350,29 @@ function isCorrect(q,ans){
  }
  return Number(ans)===q.a;
 }
+// Efek suara ringan dibuat langsung di browser, tanpa file audio tambahan.
+let soundEnabled=true;
+let soundContext=null;
+function playTone(freq, start, duration, type="sine", volume=0.045){
+ if(!soundEnabled)return;
+ try{
+  soundContext=soundContext||new (window.AudioContext||window.webkitAudioContext)();
+  if(soundContext.state==="suspended")soundContext.resume();
+  const osc=soundContext.createOscillator(), gain=soundContext.createGain();
+  osc.type=type;osc.frequency.setValueAtTime(freq,soundContext.currentTime+start);
+  gain.gain.setValueAtTime(0.0001,soundContext.currentTime+start);
+  gain.gain.exponentialRampToValueAtTime(volume,soundContext.currentTime+start+0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001,soundContext.currentTime+start+duration);
+  osc.connect(gain);gain.connect(soundContext.destination);
+  osc.start(soundContext.currentTime+start);osc.stop(soundContext.currentTime+start+duration+0.03);
+ }catch(e){}
+}
+function playFeedbackSound(correct){
+ if(correct){playTone(660,0,.13);playTone(880,.13,.18);playTone(1046,.29,.22);}
+ else{playTone(330,0,.16,"triangle",.03);playTone(260,.17,.2,"triangle",.03);}
+}
+$("soundToggle").onclick=()=>{soundEnabled=!soundEnabled;$("soundToggle").textContent=soundEnabled?"🔊 Suara: Aktif":"🔇 Suara: Mati";$("soundToggle").setAttribute("aria-pressed",String(soundEnabled));if(soundEnabled){playTone(660,0,.12);}};
+
 function check(){
  if(checked)return;
  const q=questions[idx];let ans;
@@ -311,6 +381,7 @@ function check(){
  if(ans===undefined||String(ans).trim()===""){alert("Pilih atau tulis jawaban terlebih dahulu, ya!");return;}
  checked=true;answers[idx]=ans;
  const ok=isCorrect(q,ans);
+ playFeedbackSound(ok);
  if(ok){if(mode==="diagnostic")diagScore++;else missionScore++;}
  $("feedback").className="feedback "+(ok?"good":"try");
  $("feedback").textContent=ok?"Hebat! Jawabanmu tepat.":("Belum tepat. "+(q.hint||"Ayo amati kembali bagian pola yang berulang, lalu coba lagi."));
@@ -319,6 +390,7 @@ function check(){
  $("progressFill").style.width=`${((idx+1)/questions.length)*100}%`;
 }
 function next(){
+ playTone(520,0,.07,"sine",.025);
  if(idx<questions.length-1){idx++;renderQuestion();return;}
  if(mode==="diagnostic")finishDiagnostic();else finishMission();
 }
@@ -370,7 +442,7 @@ $("reviewDiagnostic").onclick=()=>{alert("Skor asesmen awal: "+diagScore+"/10. J
 $("quitQuiz").onclick=()=>{if(confirm("Kembali ke ringkasan? Progres soal saat ini tidak akan disimpan.")){show(mode==="diagnostic"?"welcome":"levelInfo");}};
 $("continueAfterResult").onclick=()=>show("levelInfo");
 $("retryMission").onclick=beginMission;
-$("homeButton").onclick=()=>{show("welcome");$("studentName").value=name;$("welcome").classList.add("hidden");$("modeSelection").classList.remove("hidden");$("teacherPanel").classList.add("hidden");selectedAppMode="";};
+$("homeButton").onclick=()=>{show("welcome");$("studentName").value=name;$("welcome").classList.add("hidden");$("modeSelection").classList.remove("hidden");$("teacherPanel").classList.add("hidden");selectedAppMode="";$("guideToggle").classList.add("hidden");};
 if($("downloadCsv")) $("downloadCsv").onclick=downloadCsv;
 if($("clearHistory")) $("clearHistory").onclick=()=>{if(confirm("Hapus seluruh rekap lokal pada browser ini?")){localStorage.removeItem("mbaPolaHistory");renderHistory();}};
 renderHistory();
