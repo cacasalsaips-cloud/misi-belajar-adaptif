@@ -428,6 +428,8 @@ function downloadCsv(){
  const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rekap_misi_belajar_adaptif_pola.csv";a.click();URL.revokeObjectURL(a.href);
 }
+$("backFromWelcome").onclick=()=>{ $("welcome").classList.add("hidden"); $("modeSelection").classList.remove("hidden"); selectedAppMode=""; $("guideToggle").classList.add("hidden"); };
+$("backFromTeacher").onclick=()=>{ $("teacherPanel").classList.add("hidden"); $("modeSelection").classList.remove("hidden"); selectedAppMode=""; $("guideToggle").classList.add("hidden"); };
 $("startDiagnostic").onclick=startDiag;
 $("checkAnswer").onclick=check;$("nextQuestion").onclick=next;
 $("startMission").onclick=beginMission;
