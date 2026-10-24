@@ -39,6 +39,21 @@ button:disabled{opacity:.45;cursor:not-allowed;transform:none}
 footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24px}
 .hidden{display:none!important}.answer-input{margin-top:12px}
 @media(max-width:700px){.cards{grid-template-columns:1fr}.options{grid-template-columns:1fr}header{padding-top:20px}.question{font-size:1.12rem}}
+
+/* Pilihan mode dan pop-up petunjuk */
+.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.mode-card{border:1px solid var(--line);border-radius:18px;padding:22px;background:#fff;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:190px}
+.mode-card .mode-icon{font-size:2rem}.mode-card strong{font-size:1.15rem}.mode-card span:last-child{font-weight:500;color:var(--muted);line-height:1.5}
+.mode-card.student{background:#f1f7ff;border-color:#c9ddff}.mode-card.teacher{background:#f7f4ff;border-color:#ddd2ff}
+.mode-card:hover{border-color:var(--blue);box-shadow:0 8px 24px #244a7515}
+.modal-backdrop{position:fixed;inset:0;background:rgba(23,42,70,.48);display:flex;align-items:center;justify-content:center;padding:18px;z-index:1000}
+.guide-modal{background:#fff;color:var(--ink);width:min(100%,560px);max-height:min(88vh,760px);overflow:auto;border-radius:20px;padding:clamp(20px,4vw,30px);box-shadow:0 24px 70px #102b5033;border:1px solid #e5ebf4}
+.guide-modal h2{text-align:center;margin:0 0 6px}.guide-subtitle{text-align:center;color:var(--muted);margin:0 0 20px}
+.guide-modal ol{padding-left:22px;line-height:1.65}.guide-modal li{margin:0 0 9px}
+.guide-note{background:#f4f8ff;border-radius:12px;padding:12px 14px;line-height:1.55;margin-top:14px}
+.guide-actions{display:flex;justify-content:center;margin-top:20px}
+@media(max-width:600px){.mode-grid{grid-template-columns:1fr}.mode-card{min-height:0}.guide-modal{padding:20px}}
+
 </style>
 </head>
 <body>
@@ -48,13 +63,29 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
   <p>Petualangan mengenali, meniru, dan melanjutkan pola bukan bilangan. Mulai dari kemampuanmu, lalu lanjutkan misi sesuai hasil asesmen awal.</p>
 </div></header>
 <main>
-  <section id="welcome" class="panel">
+  <section id="modeSelection" class="panel">
+    <div class="toprow"><span class="pill">Selamat datang</span><span class="small muted">Pilih sesuai kebutuhanmu</span></div>
+    <h2 style="margin-top:14px">Misi Belajar Adaptif ✨</h2>
+    <p>Pilih mode untuk melanjutkan. Setiap mode memiliki petunjuk dan fitur yang berbeda.</p>
+    <div class="mode-grid">
+      <button type="button" class="mode-card student" id="chooseStudentMode">
+        <span class="mode-icon">🧩</span><strong>Mode Murid</strong>
+        <span>Kerjakan asesmen awal dan ikuti misi belajar sesuai hasilmu.</span>
+      </button>
+      <button type="button" class="mode-card teacher" id="chooseTeacherMode">
+        <span class="mode-icon">👩‍🏫</span><strong>Mode Guru</strong>
+        <span>Login untuk mengelola soal dan melihat hasil asesmen murid.</span>
+      </button>
+    </div>
+  </section>
+
+  <section id="welcome" class="panel hidden">
     <div class="toprow"><span class="pill">Belajar sesuai kebutuhan</span><span class="small muted">Bisa dibuka melalui HP, laptop, atau komputer</span></div>
     <h2 style="margin-top:14px">Selamat datang, Penjelajah Pola! 👋</h2>
     <p>Isi nama terlebih dahulu, kemudian kerjakan 10 soal asesmen awal. Jawablah sendiri sesuai pemahamanmu. Hasilnya akan membantu menentukan misi latihan yang cocok.</p>
     <label for="studentName"><strong>Nama murid</strong></label>
     <input id="studentName" type="text" maxlength="70" placeholder="Tulis nama di sini">
-    <div class="actions"><button class="primary" id="startDiagnostic">Mulai Asesmen Awal →</button></div>
+    <div class="actions"><button type="button" class="quiet" id="backFromWelcome">← Kembali</button><button class="primary" id="startDiagnostic">Mulai Asesmen Awal →</button></div>
     <p class="small muted">Hasil misi akan dikirim ke rekap guru saat koneksi daring sudah diaktifkan.</p>
   </section>
 
@@ -88,8 +119,9 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
     <div class="actions"><button id="continueAfterResult" class="primary">Lanjutkan</button><button id="retryMission" class="secondary">Ulangi Misi</button><button id="homeButton" class="quiet">Kembali ke Awal</button></div>
   </section>
 
-  <section id="teacherPanel" class="panel">
+  <section id="teacherPanel" class="panel hidden">
     <div class="toprow"><h2>📋 Area Guru</h2><span class="pill">Kelola soal & hasil murid</span></div>
+    <div class="actions" style="justify-content:flex-start;margin-top:0"><button type="button" class="quiet" id="backFromTeacher">← Kembali ke Pilihan Mode</button></div>
     <p class="small muted">Guru login dengan akun Google yang sudah diizinkan. Murid tidak perlu login.</p>
     <div id="teacherLogin"><div id="googleButton"></div><p class="small muted">Masuk menggunakan akun Google guru yang telah diizinkan.</p></div>
     <div id="teacherWorkspace" class="hidden">
@@ -100,6 +132,43 @@ footer{text-align:center;color:var(--muted);font-size:.82rem;padding:8px 12px 24
     <p id="connectionStatus" class="small muted" role="status">Website belum terhubung ke penyimpanan online.</p>
   </section>
 </main>
+
+
+<div id="guideModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="guide-modal">
+    <h2 id="guideTitle">Misi Belajar Adaptif</h2>
+    <p id="guideSubtitle" class="guide-subtitle">Petunjuk penggunaan website</p>
+    <div id="studentGuide" class="hidden">
+      <h3>👋 Halo, Penjelajah Pola!</h3>
+      <p>Yuk, ikuti petunjuk berikut sebelum memulai.</p>
+      <ol>
+        <li>Isi nama dan kelasmu dengan benar.</li>
+        <li>Kerjakan 10 soal awal tentang pola secara mandiri.</li>
+        <li>Bacalah soal dengan teliti dan pilih jawaban yang menurutmu benar.</li>
+        <li>Setelah selesai, ikuti misi belajar yang kamu dapatkan: Fondasi, Berkembang, atau Tantangan.</li>
+        <li>Kerjakan setiap misi dengan jujur. Jika mengalami kendala saat menggunakan website, mintalah bantuan guru.</li>
+      </ol>
+      <div class="guide-note">💡 Ingat, tidak perlu takut salah. Kita belajar untuk berkembang!</div>
+    </div>
+    <div id="teacherGuide" class="hidden">
+      <h3>👩‍🏫 Panduan untuk Guru</h3>
+      <p>Ikuti petunjuk berikut untuk menggunakan website secara mandiri.</p>
+      <ol>
+        <li>Pastikan website dapat diakses dan seluruh soal berfungsi dengan baik.</li>
+        <li>Jelaskan tujuan asesmen kepada murid dan tekankan bahwa hasilnya bukan untuk membandingkan kemampuan mereka.</li>
+        <li>Arahkan murid mengisi identitas dan mengerjakan 10 soal diagnostik secara mandiri.</li>
+        <li>Periksa hasil asesmen dan jalur belajar yang diberikan website.</li>
+        <li>Dampingi murid sesuai kebutuhannya pada misi Fondasi, Berkembang, atau Tantangan.</li>
+        <li>Gunakan hasil pengerjaan dan pengamatan selama kegiatan untuk menentukan tindak lanjut pembelajaran.</li>
+        <li>Gunakan menu <strong>Kelola Soal</strong> untuk menambah, mengedit, atau menghapus soal sesuai kebutuhan pembelajaran.</li>
+        <li>Pastikan hasil asesmen tersimpan sebelum menggunakannya sebagai dasar tindak lanjut.</li>
+      </ol>
+      <div class="guide-note">💡 Jika membutuhkan panduan kembali, guru dapat membuka petunjuk penggunaan dari dashboard.</div>
+    </div>
+    <div class="guide-actions" style="gap:10px;flex-wrap:wrap"><button type="button" id="backGuide" class="quiet">← Kembali</button><button type="button" id="closeGuide" class="primary">Lanjutkan</button></div>
+  </div>
+</div>
+
 <footer>Misi Belajar Adaptif • Materi Pola Bukan Bilangan • Kelas II A</footer>
 <script>
 const diagnostic = [
@@ -154,6 +223,53 @@ const missions = {
 };
 let name="",mode="diagnostic",level="foundation",questions=[],idx=0,answers=[],checked=false,diagScore=0,missionScore=0,lastResult=null;
 const $=id=>document.getElementById(id);
+let selectedAppMode="";
+function openGuide(which){
+  $("studentGuide").classList.toggle("hidden",which!=="student");
+  $("teacherGuide").classList.toggle("hidden",which!=="teacher");
+  $("guideTitle").textContent=which==="student"?"Misi Belajar Adaptif":"Panduan untuk Guru";
+  $("guideSubtitle").textContent=which==="student"?"Petunjuk untuk Penjelajah Pola":"Petunjuk pengelolaan asesmen dan soal";
+  $("guideModal").classList.remove("hidden");
+}
+function closeGuide(){
+  $("guideModal").classList.add("hidden");
+  if(selectedAppMode==="student"){
+    $("modeSelection").classList.add("hidden");
+    $("teacherPanel").classList.add("hidden");
+    show("welcome");
+  }else if(selectedAppMode==="teacher"){
+    $("modeSelection").classList.add("hidden");
+    $("teacherPanel").classList.remove("hidden");
+  }
+}
+$("chooseStudentMode").onclick=()=>{selectedAppMode="student";openGuide("student");};
+$("chooseTeacherMode").onclick=()=>{
+  selectedAppMode="teacher";
+  $("modeSelection").classList.add("hidden");
+  $("welcome").classList.add("hidden");
+  $("teacherPanel").classList.remove("hidden");
+};
+$("closeGuide").onclick=closeGuide;
+$("backGuide").onclick=()=>{
+  $("guideModal").classList.add("hidden");
+  if(selectedAppMode==="student"){
+    show("welcome");
+    $("welcome").classList.add("hidden");
+    $("modeSelection").classList.remove("hidden");
+    selectedAppMode="";
+  }else if(selectedAppMode==="teacher"){
+    // Setelah login guru, tutup panduan tanpa mengeluarkan akun.
+    if(mbaTeacherToken){$("teacherPanel").classList.remove("hidden");}
+    else {$("teacherPanel").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";}
+  }
+};
+$("backFromWelcome").onclick=()=>{show("welcome");$("welcome").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";};
+$("backFromTeacher").onclick=()=>{
+  if(mbaTeacherToken){
+    if(!confirm("Kamu sudah login sebagai guru. Kembali ke pilihan mode tanpa keluar dari akun?")) return;
+  }
+  $("teacherPanel").classList.add("hidden");$("modeSelection").classList.remove("hidden");selectedAppMode="";
+};
 function show(id){["welcome","levelInfo","quizPanel","resultPanel"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
 function normalize(s){return String(s||"").toLowerCase().trim().replace(/[.,!?;:]/g,"").replace(/\s+/g," ");}
 async function startDiag(){name=$("studentName").value.trim()||"Murid";mode="diagnostic";questions=await getQuestionSet("diagnostic",diagnostic);idx=0;answers=[];checked=false;diagScore=0;show("quizPanel");renderQuestion();}
@@ -254,7 +370,7 @@ $("reviewDiagnostic").onclick=()=>{alert("Skor asesmen awal: "+diagScore+"/10. J
 $("quitQuiz").onclick=()=>{if(confirm("Kembali ke ringkasan? Progres soal saat ini tidak akan disimpan.")){show(mode==="diagnostic"?"welcome":"levelInfo");}};
 $("continueAfterResult").onclick=()=>show("levelInfo");
 $("retryMission").onclick=beginMission;
-$("homeButton").onclick=()=>{show("welcome");$("studentName").value=name;};
+$("homeButton").onclick=()=>{show("welcome");$("studentName").value=name;$("welcome").classList.add("hidden");$("modeSelection").classList.remove("hidden");$("teacherPanel").classList.add("hidden");selectedAppMode="";};
 if($("downloadCsv")) $("downloadCsv").onclick=downloadCsv;
 if($("clearHistory")) $("clearHistory").onclick=()=>{if(confirm("Hapus seluruh rekap lokal pada browser ini?")){localStorage.removeItem("mbaPolaHistory");renderHistory();}};
 renderHistory();
@@ -270,7 +386,7 @@ async function getQuestionSet(collection,fallback){try{const d=await mbaApi("get
 function fromStoredQuestion(q){return {id:q.id,p:q.p,v:q.v||"",type:"mc",o:Array.isArray(q.options)&&q.options.length>=2?q.options:[],a:Number(q.answer||0),answers:[],hint:q.hint||"Ayo amati kembali pola yang berulang."};}
 function toStoredQuestion(q){return {id:q.id||"",collection:q.collection,p:q.p||"",v:q.v||"",type:q.type||"mc",options:q.o||[],answer:Number(q.a||0),answers:q.answers||[],hint:q.hint||""};}
 function initializeGoogle(){if(!mbaClientId||!window.google||!google.accounts||!google.accounts.id){if(mbaApiUrl) mbaApi("ping").then(()=>mbaStatus("Server terhubung. Tombol login Google sedang dimuat.")).catch(e=>mbaStatus(e.message));return;}google.accounts.id.initialize({client_id:mbaClientId,callback:mbaGoogleCredential});google.accounts.id.renderButton($("googleButton"),{theme:"outline",size:"large",text:"signin_with",shape:"rectangular"});}
-function mbaGoogleCredential(response){mbaTeacherToken=response.credential; mbaApi("teacherMe",{idToken:mbaTeacherToken}).then(d=>{mbaTeacherEmail=d.email;$("teacherIdentity").textContent="Login sebagai "+mbaTeacherEmail;$("teacherLogin").classList.add("hidden");$("teacherWorkspace").classList.remove("hidden");mbaStatus("Login guru berhasil.");}).catch(e=>{mbaTeacherToken="";mbaStatus("Login guru gagal: "+e.message);});}
+function mbaGoogleCredential(response){mbaTeacherToken=response.credential; mbaApi("teacherMe",{idToken:mbaTeacherToken}).then(d=>{mbaTeacherEmail=d.email;$("teacherIdentity").textContent="Login sebagai "+mbaTeacherEmail;$("teacherLogin").classList.add("hidden");$("teacherWorkspace").classList.remove("hidden");mbaStatus("Login guru berhasil.");openGuide("teacher");}).catch(e=>{mbaTeacherToken="";mbaStatus("Login guru gagal: "+e.message);});}
 function teacherApi(action,params={}){return mbaApi(action,{...params,idToken:mbaTeacherToken});}
 function escapeAttr(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 async function loadQuestionEditor(){try{const d=await teacherApi("teacherGetQuestions");mbaQuestionCache=(d.questions||[]).map(q=>({...fromStoredQuestion(q),id:q.id,collection:q.collection}));let h='<div style="margin-top:20px"><h3>Bank Soal</h3><p class="small muted">Pilih kelompok soal. Kamu bisa menambah, mengedit, atau menghapus pertanyaan tanpa mengubah kode website.</p><button class="primary" onclick="editBankQuestion(null)">+ Tambah Soal</button> <button class="secondary" onclick="importDefaultQuestions()">Muat Soal Bawaan</button><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-top:12px"><thead><tr><th style="text-align:left;padding:9px">Kelompok</th><th style="text-align:left;padding:9px">Pertanyaan</th><th style="text-align:left;padding:9px">Aksi</th></tr></thead><tbody>';
@@ -286,7 +402,7 @@ async function loadOnlineResults(){try{const d=await teacherApi('teacherGetResul
 async function deleteOneOnlineResult(sheetRow){if(!Number.isInteger(sheetRow)||sheetRow<2){alert('Baris hasil tidak valid. Muat ulang daftar hasil.');return;}if(!confirm('Hapus hasil murid ini dari Google Sheets? Tindakan ini tidak dapat dibatalkan.'))return;try{await teacherApi('teacherDeleteResult',{sheetRow:String(sheetRow)});mbaStatus('Hasil berhasil dihapus.');await loadOnlineResults();}catch(e){mbaStatus('Gagal menghapus hasil: '+e.message);}}
 async function deleteAllOnlineResults(){if(!confirm('HAPUS SEMUA hasil murid dari Google Sheets? Tindakan ini tidak dapat dibatalkan.'))return;if(!confirm('Konfirmasi terakhir: semua hasil online akan dihapus. Lanjutkan?'))return;try{await teacherApi('teacherDeleteAllResults');mbaStatus('Semua hasil online berhasil dihapus.');await loadOnlineResults();}catch(e){mbaStatus('Gagal menghapus hasil: '+e.message);}}
 async function downloadOnlineCsv(){try{const d=await teacherApi('teacherGetResults');const rows=[['Waktu','Nama','Kegiatan','Skor','Jumlah Soal','Persentase','Rekomendasi'],...(d.results||[]).map(r=>[r.timestamp,r.name,r.mode,r.score,r.total,r.percent,r.recommendedLevel])];const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}));a.download='hasil-misi-belajar-adaptif.csv';a.click();URL.revokeObjectURL(a.href);}catch(e){mbaStatus(e.message);}}
-function teacherLogout(){mbaTeacherToken='';mbaTeacherEmail='';$('teacherWorkspace').classList.add('hidden');$('teacherLogin').classList.remove('hidden');$('editorArea').innerHTML='';$('resultsArea').innerHTML='';mbaStatus('Guru telah keluar.');}
+function teacherLogout(){mbaTeacherToken='';mbaTeacherEmail='';$('teacherWorkspace').classList.add('hidden');$('teacherLogin').classList.remove('hidden');$('editorArea').innerHTML='';$('resultsArea').innerHTML='';$('teacherPanel').classList.add('hidden');$('modeSelection').classList.remove('hidden');selectedAppMode='';mbaStatus('Guru telah keluar.');}
 $('manageQuestions').onclick=loadQuestionEditor;$('viewResults').onclick=loadOnlineResults;$('teacherLogout').onclick=teacherLogout;
 window.addEventListener('load',()=>setTimeout(()=>{initializeGoogle();if(mbaApiUrl)mbaApi('ping').then(()=>mbaStatus('Terhubung ke penyimpanan online.')).catch(e=>mbaStatus('Koneksi online belum berhasil: '+e.message));},900));
 </script>
